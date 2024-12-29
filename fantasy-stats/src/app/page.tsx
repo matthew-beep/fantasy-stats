@@ -9,7 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+
 
 type LeagueData = {
   league: {
@@ -55,6 +58,7 @@ export default function Home() {
   const [data, setData] = useState<LeagueData[]>([]);
   const [teamData, setTeamData] = useState<TeamData[]>([]);
   const [playerData, setPlayerData] = useState<PlayerData[]>([]);
+
   useEffect(() => {
     async function fetchLeagues() {
       try {
@@ -96,6 +100,8 @@ export default function Home() {
     fetchTeams();
   }, []);
 
+  
+  /*
   const handleClick = (id:number) => {
     console.log(id);
 
@@ -118,41 +124,35 @@ export default function Home() {
 
     fetchPlayers();
   }
-
+  */
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center justify-center sm:items-start">
-      <ul className="border-2">
-        {data.map((item, index) => (
-          <li key={index}>
-            <strong>League:</strong> {item.league.name} <br />
-            <strong>Country:</strong> {item.country.name}
-          </li>
-        ))}
-      </ul>
-      <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
-        {teamData.map((item, index) => (
-          <li key={index}>
-            <Card 
-              className="flex items-center justify-end flex-row-reverse cursor-pointer h-auto w-84 lg:w-96 px-5 hover:bg-zinc-200 duration-200 transition-all"
-              onClick={() => handleClick(item.id)}
-            >
-              <CardHeader className="flex">
-                <CardTitle>{item.name}</CardTitle>
-              </CardHeader>
-              <div className="w-auto h-full flex justify-center">
-                <Image
-                  aria-hidden
-                  src={item.logo}
-                  alt="Team Logo"
-                  width={32}
-                  height={32}
-                />
-              </div>
-            </Card>
-          </li>
-          ))}
-      </ul>
+      <main className="flex flex-col gap-8 row-start-2 items-center justify-center sm:items-start border-2 w-full">
+        <Input/>
+          <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
+          {teamData.map((item, index) => (
+            <li key={index}>
+              <Card 
+                className="flex items-center justify-end flex-row-reverse cursor-pointer h-auto w-84 lg:w-96 px-5 hover:bg-zinc-200 duration-200 transition-all"
+              >
+                <Link href={`/players/${item.id}`} className="w-full h-full flex items-center justify-end flex-row-reverse" passHref>
+                  <CardHeader className="flex">
+                    <CardTitle>{item.name}</CardTitle>
+                  </CardHeader>
+                  <div className="w-auto h-full flex justify-center">
+                    <Image
+                      aria-hidden
+                      src={item.logo}
+                      alt="Team Logo"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
+                </Link>
+              </Card>
+            </li>
+            ))}
+          </ul>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
 
