@@ -1,100 +1,161 @@
+'use client'
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { useState, useEffect } from "react";
+
+type LeagueData = {
+  league: {
+    id:number;
+    name:string;
+    logo:string;
+  }
+
+  country: {
+    name:string;
+    code:string;
+    flag:string;
+  }
+}
+
+type TeamData = {
+  city:string;
+  coach:string;
+  name:string;
+  logo:string;
+  owner:string;
+  id:number;
+}
+
+type PlayerData = {
+  id:number;
+  name:string;
+  age:number;
+  height:string;
+  weight:string;
+  college:string;
+  group:string;
+  position:string;
+  number:number;
+  salary:string;
+  experience:number;
+  image:string;
+}
+
 
 export default function Home() {
+  
+  const [data, setData] = useState<LeagueData[]>([]);
+  const [teamData, setTeamData] = useState<TeamData[]>([]);
+  const [playerData, setPlayerData] = useState<PlayerData[]>([]);
+  useEffect(() => {
+    async function fetchLeagues() {
+      try {
+        const response = await fetch("/api/leagues");
+        const result = await response.json();
+        
+        // Check if the result is structured as expected
+        if (result && result.response && Array.isArray(result.response)) {
+          setData(result.response); // Assign the response data
+        } else {
+          console.error("Invalid data format from API");
+        }
+      } catch (error) {
+        console.error("Failed to fetch leagues", error);
+      }
+    }
+
+    fetchLeagues();
+  }, []);
+
+  useEffect(() => {
+    async function fetchTeams() {
+      try {
+        const response = await fetch("/api/teams");
+        const result = await response.json();
+        
+        // Check if the result is structured as expected
+        if (result && result.response && Array.isArray(result.response)) {
+          setTeamData(result.response); // Assign the response data
+          console.log(result);
+        } else {
+          console.error("Invalid data format from API");
+        }
+      } catch (error) {
+        console.error("Failed to fetch teams", error);
+      }
+    }
+
+    fetchTeams();
+  }, []);
+
+  const handleClick = (id:number) => {
+    console.log(id);
+
+    async function fetchPlayers() {
+      try {
+        const response = await fetch(`/api/players/?id=${id}`);
+        const result = await response.json();
+        
+        // Check if the result is structured as expected
+        if (result && result.response && Array.isArray(result.response)) {
+          setPlayerData(result.response); // Assign the response data
+          console.log(result);
+        } else {
+          console.error("Invalid data format from API");
+        }
+      } catch (error) {
+        console.error("Failed to fetch teams", error);
+      }
+    }
+
+    fetchPlayers();
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
+      <main className="flex flex-col gap-8 row-start-2 items-center justify-center sm:items-start">
+      <ul className="border-2">
+        {data.map((item, index) => (
+          <li key={index}>
+            <strong>League:</strong> {item.league.name} <br />
+            <strong>Country:</strong> {item.country.name}
           </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+        ))}
+      </ul>
+      <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
+        {teamData.map((item, index) => (
+          <li key={index}>
+            <Card 
+              className="flex items-center justify-end flex-row-reverse cursor-pointer h-auto w-84 lg:w-96 px-5 hover:bg-zinc-200 duration-200 transition-all"
+              onClick={() => handleClick(item.id)}
+            >
+              <CardHeader className="flex">
+                <CardTitle>{item.name}</CardTitle>
+              </CardHeader>
+              <div className="w-auto h-full flex justify-center">
+                <Image
+                  aria-hidden
+                  src={item.logo}
+                  alt="Team Logo"
+                  width={32}
+                  height={32}
+                />
+              </div>
+            </Card>
+          </li>
+          ))}
+      </ul>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
       </footer>
     </div>
   );
