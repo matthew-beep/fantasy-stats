@@ -33,7 +33,7 @@ type TeamData = {
   id:number;
 }
 
-
+// need to cache team data
 export default function Home() {
   
   const [data, setData] = useState<LeagueData[]>([]);
