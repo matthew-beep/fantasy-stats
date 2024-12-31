@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { useParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link";
+import TeamHeader from './teamInfo';
 
 
 type TeamData = {
@@ -47,6 +48,8 @@ type PlayerData = {
 }
 
 
+
+// set a loading variable
 export default function Home() {
   
   const [teamStatData, setTeamStatData] = useState<TeamData | null>(null);
@@ -106,7 +109,7 @@ export default function Home() {
     //setPlayerData(display.filter((player) => player.name.includes(search)));
   },[search])
 
-
+  // need to turn header to component
   return (
     <div className="items-center justify-items-center min-h-screen gap-16 font-[family-name:var(--font-geist-sans)]">
       <header className="w-full">
@@ -118,32 +121,7 @@ export default function Home() {
       <main className="flex flex-col gap-8 row-start-2 sm:items-start w-11/12 h-full">
         <div className="">
           {teamStatData ? (
-            <div>
-              <div>
-                <div className="flex items-center justify-between">
-                  <h1 className="text-3xl md:text-6xl">{teamStatData.team.name}</h1>
-                  <div className="w-auto h-full flex justify-center">
-                    <Image
-                      aria-hidden
-                      src={teamStatData.team.logo}
-                      alt="Team Logo"
-                      width={32}
-                      height={32}
-                    />
-                  </div>
-                </div>
-                <h1>Rank: #{teamStatData.position} in {teamStatData.division}</h1>
-                <div className="flex gap-2">
-                  <p>{teamStatData.won} - {teamStatData.lost} - {teamStatData.ties}</p>
-                  <p
-                    style={{
-                      color: teamStatData.streak.charAt(0) == 'W' ? 'green' : 'red'
-                    }}
-                  >{teamStatData.streak}</p>
-                </div>
-                
-              </div>
-            </div>
+            <TeamHeader TeamStatData={teamStatData} />
           ) : (
             <p>Loading team data...</p>
           )}
