@@ -26,13 +26,11 @@ interface TeamHeaderProps {
 }
 
 // set a loading variable
-const TeamHeader: React.FC<TeamHeaderProps> = ({ TeamStatData}) => {
+const TeamHeader: React.FC<TeamHeaderProps> = ({ TeamStatData }) => {
   const { team, position, division, won, lost, ties, streak } = TeamStatData;
   const {name, logo} = team;
 
   return (
-
-
       <div>
         <div>
           <div className="flex items-center justify-between">
@@ -47,7 +45,7 @@ const TeamHeader: React.FC<TeamHeaderProps> = ({ TeamStatData}) => {
               />
             </div>
           </div>
-          <h1>Rank: #{position} in {division}</h1>
+          <h2>#{position} in {division}</h2>
           <div className="flex gap-2">
             <p>{won} - {lost} - {ties}</p>
             <p

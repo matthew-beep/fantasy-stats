@@ -4,14 +4,14 @@ import { Input } from "@/components/ui/input";
 import {
   Card,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card"
 import { useState, useEffect } from "react";
 import { useParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link";
 import TeamHeader from './teamInfo';
-
+import GameCard from "./GameCard";
 
 type TeamData = {
   city:string;
@@ -47,7 +47,26 @@ type PlayerData = {
   image:string;
 }
 
-
+type GameData = {
+  game: {
+    stage:string;
+    id:number;
+    venue:string;
+    week:string;
+  }
+  scores: {
+    away:{
+      total:number;
+    }
+    home:{
+      total:number;
+    }
+  }
+  teams:{
+    away:TeamData;
+    home:TeamData;
+  }
+}
 
 // set a loading variable
 export default function Home() {
@@ -55,12 +74,15 @@ export default function Home() {
   const [teamStatData, setTeamStatData] = useState<TeamData | null>(null);
   const [playerData, setPlayerData] = useState<PlayerData[]>([]);
   const [search, setSearch] = useState<string>("");
-  //const [id, setId] = useState
+  const [id, setId] = useState<string>("");
   const param = useParams();
+  const [gameData, setGameData] = useState<GameData[]>([]); 
 
   useEffect(() => {
     async function fetchTeamStats() {
       if(param) {
+        console.log(param.id)
+        setId(id);
         try {
           const response = await fetch(`/api/teamStandings/?id=${param.id}`);
           const result = await response.json();
@@ -81,9 +103,33 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    async function fetchGames() {
+      if(param) {
+        try {
+          console.log("getting games...")
+          const response = await fetch(`/api/games/?team=${param.id}`);
+          const result = await response.json();
+          
+          // Check if the result is structured as expected
+          if (result && result.response && Array.isArray(result.response)) {
+            console.log(result.response)
+            setGameData(result.response); // Assign the response data
+          } else {
+            console.error("Invalid data format from API");
+          }
+        } catch (error) {
+          console.error("Failed to fetch teams", error);
+        }
+      }
+    }
+    fetchGames();
+  }, []);
+
+  useEffect(() => {
     async function fetchPlayers() {
       if(param) {
         try {
+          console.log("getting games...")
           const response = await fetch(`/api/players/?id=${param.id}`);
           const result = await response.json();
           
@@ -101,13 +147,6 @@ export default function Home() {
     }
     fetchPlayers();
   }, []);
-
-  useEffect(() => {
-    const display = [...playerData];
-    console.log("search: " + search);
-    console.log(display.filter((player) => player.name.toLowerCase().includes(search.toLowerCase())));
-    //setPlayerData(display.filter((player) => player.name.includes(search)));
-  },[search])
 
   // need to turn header to component
   return (
@@ -128,12 +167,15 @@ export default function Home() {
         </div>
         <Tabs defaultValue="Team" className="w-full">
           <TabsList>
-            <TabsTrigger value="Team">Team Stats</TabsTrigger>
+            <TabsTrigger value="Team">Schedule</TabsTrigger>
             <TabsTrigger value="Players">Players</TabsTrigger>
           </TabsList>
           <TabsContent value="Team" className="">
-            <div>
-            </div>
+            <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
+              {gameData.filter(game => game.game.stage === "Regular Season").map((game, index) => (
+                teamStatData && <GameCard gameObject={game} team={teamStatData.team.name} key={index}/>
+              ))}
+            </ul>
           </TabsContent>
           <TabsContent value="Players" className="flex flex-col justify-center gap-10">
             <Input 

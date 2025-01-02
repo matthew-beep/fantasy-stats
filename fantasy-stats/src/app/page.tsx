@@ -73,6 +73,8 @@ export default function Home() {
         } else {
           console.error("Invalid data format from API");
         }
+        
+
       } catch (error) {
         console.error("Failed to fetch teams", error);
       }
