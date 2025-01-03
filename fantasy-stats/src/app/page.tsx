@@ -83,7 +83,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="border-2 items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center sm:items-start w-full">
           <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
           {teamData.map((item, index) => (

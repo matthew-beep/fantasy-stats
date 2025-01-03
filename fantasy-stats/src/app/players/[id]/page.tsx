@@ -53,6 +53,12 @@ type GameData = {
     id:number;
     venue:string;
     week:string;
+    date: {
+      date:string;
+    }
+    status: {
+      short:string;
+    }
   }
   scores: {
     away:{
@@ -150,13 +156,13 @@ export default function Home() {
 
   // need to turn header to component
   return (
-    <div className="items-center justify-start flex flex-col min-h-screen font-[family-name:var(--font-geist-sans)]py-10 gap-5">
+    <div className="items-center justify-start flex flex-col min-h-screen font-[family-name:var(--font-geist-sans)] py-10 gap-5">
       <header className="w-11/12">
         <Link href="/" className="border-2 border-black rounded-full px-3 py-1">
           Back
         </Link>
       </header>
-      <main className="flex flex-col gap-8 row-start-2 w-11/12 h-full border-2">
+      <main className="flex flex-col gap-8 row-start-2 w-11/12 h-full">
         <div className="">
           {teamStatData ? (
             <TeamHeader TeamStatData={teamStatData} />
@@ -170,7 +176,7 @@ export default function Home() {
             <TabsTrigger value="Players">Players</TabsTrigger>
           </TabsList>
           <TabsContent value="Team" className="">
-            <ul className="flex flex-col items-center lg:flex-row lg:flex-wrap w-full gap-5 justify-between">
+            <ul className="flex flex-col items-center lg:flex-row lg:flex-wrap w-full gap-2 justify-between">
               {gameData.filter(game => game.game.stage === "Regular Season").map((game, index) => (
                 teamStatData && <GameCard gameObject={game} team={teamStatData.team.name} key={index}/>
               ))}

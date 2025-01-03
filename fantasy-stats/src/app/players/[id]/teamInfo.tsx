@@ -31,30 +31,32 @@ const TeamHeader: React.FC<TeamHeaderProps> = ({ TeamStatData }) => {
   const {name, logo} = team;
 
   return (
-      <div>
-        <div>
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl md:text-6xl">{name}</h1>
+      <div className="font-spartan">
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center justify-between gap-5">
             <div className="w-auto h-full flex justify-center">
               <Image
                 aria-hidden
                 src={logo}
                 alt="Team Logo"
-                width={32}
-                height={32}
+                width={64}
+                height={64}
               />
             </div>
+            <h1 className="text-3xl md:text-6xl font-semibold">{name}</h1>
           </div>
-          <h2>#{position} in {division}</h2>
           <div className="flex gap-2">
-            <p>{won} - {lost} - {ties}</p>
-            <p
-              style={{
-                color: streak.charAt(0) == 'W' ? 'green' : 'red'
-              }}
-            >{streak}</p>
+            <h2>{division}: #{position}</h2>
+            <span className="font-semibold"> | </span>
+            <div className="flex gap-2">
+              <p>{won} - {lost} - {ties}</p>
+              <p
+                style={{
+                  color: streak.charAt(0) == 'W' ? 'green' : 'red'
+                }}
+              >{streak}</p>
+            </div>
           </div>
-          
         </div>
       </div>
     

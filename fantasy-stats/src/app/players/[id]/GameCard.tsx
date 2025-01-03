@@ -3,7 +3,6 @@ import Image from "next/image";
 import {
   Card,
   CardHeader,
-  CardTitle,
   CardDescription,
   CardContent
 } from "@/components/ui/card";
@@ -34,6 +33,12 @@ type GameData = {
     id:number;
     venue:string;
     week:string;
+    status: {
+      short:string;
+    }
+    date: {
+      date:string;
+    }
   }
   scores: {
     away:{
@@ -58,34 +63,45 @@ interface TeamGameProps {
 const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
   const { game, scores, teams} = gameObject;
   const [isWinner, setWinner] = useState<string>("W");
+  const [versus, setVersus] = useState<string>("vs");
+  const [otherTeam, setOtherTeam] = useState<string>("");
+  const [logo, setLogo] = useState<string>("");
+  const [day, setDay] = useState<string>("");
 
 
   useEffect(() => {
-    if ((teams.away.name === team) && (scores.away.total > scores.home.total)) {
+    const isAway = teams.away.name === team;
+    if (isAway) {
+      setVersus("@");
+      setOtherTeam(teams.home.name);
+      setLogo(teams.home.logo);
+    } else {
+      setVersus("vs");
+      setOtherTeam(teams.away.name);
+      setLogo(teams.away.logo);
+    }
+
+    if ((isAway) && (scores.away.total > scores.home.total) || (!isAway) && (scores.away.total < scores.home.total)) {
       setWinner("W");
+    } else if ((isAway) && (scores.away.total === scores.home.total) || (!isAway) && (scores.away.total === scores.home.total)) {
+      setWinner("T");
     } else {
       setWinner("L");
     }
-  }, [team]);
+  }, [teams]);
 
-  return (
-    <li>
-      <Card 
-        className="flex items-center flex-col h-auto w-84 lg:w-96"
-      >
-        <CardHeader className="flex w-full">
-          <CardDescription className="border-2 flex justify-between">
-            <h2>{game.week} - {game.stage}</h2>
-            <p 
-              style={{
-                color: isWinner === "W" ? "green" : "red"
-              }}
-            >
-              {isWinner}
-            </p>
-          </CardDescription>
-          <CardTitle className="text-sm flex">
-            <span className="flex flex-col w-full items-center">                    
+  useEffect(() => {
+    const date = new Date(game.date.date);
+    const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' });
+    const formatted = date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+    });
+    setDay(dayOfWeek + " " + formatted);
+  }, [game])
+
+  /*
+              <span className="flex flex-col w-full items-center">                    
               <Image
                 aria-hidden
                 src={teams.home.logo}
@@ -97,26 +113,59 @@ const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
                 {teams.home.name}
               </div>
               <div></div>                       
-            </span> vs                       
-            <span className="flex flex-col w-full items-center">                    
-              <Image
-                aria-hidden
-                src={teams.away.logo}
-                alt="Headshot of player"
-                width={32}
-                height={32}
-              />
-              <div>
-                {teams.away.name}
-              </div>       
-            </span>
-          </CardTitle>
+            </span> 
+  */ 
+
+  return (
+    <li className="w-full lg:w-auto font-spartan cursor-pointer">
+      <Card 
+        className="flex items-center flex-col gap-2 h-auto w-full lg:w-96 px-5 py-2  hover:bg-slate-200"
+      >
+        <CardHeader className="flex w-full p-0">
+          <CardDescription className="flex justify-between w-full">
+            <h2>{day} - {game.week}</h2>
+          </CardDescription>
         </CardHeader>
-        <CardContent className="border-2 flex  flex-col items-center justify-center">
-          <p>
-            {scores.home.total} - {scores.away.total} 
-          </p>
-          <button>Show Game Summary</button>
+        <CardContent className="flex items-center h-auto w-full p-0 gap-3">
+          <div className="flex items-center gap-2">
+            <p className="text-blue-600 font-semibold">
+              {versus}
+            </p>
+            <p className="gap-2 flex">                     
+              <span className="flex w-full items-center gap-2">                    
+                {logo && (          
+                  <Image
+                    aria-hidden
+                    src={logo}
+                    alt="Headshot of player"
+                    width={32}
+                    height={32}
+                  />
+                )}
+                <p>
+                  {otherTeam}
+                </p>       
+              </span>
+            </p>               
+          </div>
+          <div className="flex items-center gap-2">
+            <p>
+              {scores.home.total} - {scores.away.total} 
+            </p>
+            {game.status.short === "NS" ? (
+              <p className="text-gray-500">
+                Not Started
+              </p> 
+            ) : (
+              <p
+              style={{
+                color: isWinner === "W"? "green" : "red"
+              }}
+              >
+                {isWinner}
+              </p>
+            )}
+          </div>
         </CardContent>
       </Card>
     </li>
