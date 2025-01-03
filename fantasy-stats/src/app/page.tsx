@@ -1,6 +1,5 @@
 'use client'
 import Image from "next/image";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardHeader,
@@ -84,9 +83,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="border-2 items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center sm:items-start w-full">
-        <Input/>
           <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
           {teamData.map((item, index) => (
             <li key={index}>

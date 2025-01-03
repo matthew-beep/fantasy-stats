@@ -150,14 +150,13 @@ export default function Home() {
 
   // need to turn header to component
   return (
-    <div className="items-center justify-items-center min-h-screen gap-16 font-[family-name:var(--font-geist-sans)]">
-      <header className="w-full">
-        <Link href="/">
+    <div className="items-center justify-start flex flex-col min-h-screen font-[family-name:var(--font-geist-sans)]py-10 gap-5">
+      <header className="w-11/12">
+        <Link href="/" className="border-2 border-black rounded-full px-3 py-1">
           Back
         </Link>
-        
       </header>
-      <main className="flex flex-col gap-8 row-start-2 sm:items-start w-11/12 h-full">
+      <main className="flex flex-col gap-8 row-start-2 w-11/12 h-full border-2">
         <div className="">
           {teamStatData ? (
             <TeamHeader TeamStatData={teamStatData} />
@@ -171,7 +170,7 @@ export default function Home() {
             <TabsTrigger value="Players">Players</TabsTrigger>
           </TabsList>
           <TabsContent value="Team" className="">
-            <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
+            <ul className="flex flex-col items-center lg:flex-row lg:flex-wrap w-full gap-5 justify-between">
               {gameData.filter(game => game.game.stage === "Regular Season").map((game, index) => (
                 teamStatData && <GameCard gameObject={game} team={teamStatData.team.name} key={index}/>
               ))}

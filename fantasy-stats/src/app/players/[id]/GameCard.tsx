@@ -76,7 +76,13 @@ const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
         <CardHeader className="flex w-full">
           <CardDescription className="border-2 flex justify-between">
             <h2>{game.week} - {game.stage}</h2>
-            <p>{isWinner}</p>
+            <p 
+              style={{
+                color: isWinner === "W" ? "green" : "red"
+              }}
+            >
+              {isWinner}
+            </p>
           </CardDescription>
           <CardTitle className="text-sm flex">
             <span className="flex flex-col w-full items-center">                    
