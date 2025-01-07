@@ -60,14 +60,15 @@ interface TeamGameProps {
 }
 
 // set a loading variable
-const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
+const GameCard: React.FC<TeamGameProps> = ({ gameObject, team }) => {
   const { game, scores, teams} = gameObject;
   const [isWinner, setWinner] = useState<string>("W");
   const [versus, setVersus] = useState<string>("vs");
   const [otherTeam, setOtherTeam] = useState<string>("");
   const [logo, setLogo] = useState<string>("");
   const [day, setDay] = useState<string>("");
-
+  const [teamScore, setTeamScore] = useState<number>(0);
+  const [opponentScore, setOpponentScore] = useState<number>(0);
 
   useEffect(() => {
     const isAway = teams.away.name === team;
@@ -81,12 +82,29 @@ const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
       setLogo(teams.away.logo);
     }
 
-    if ((isAway) && (scores.away.total > scores.home.total) || (!isAway) && (scores.away.total < scores.home.total)) {
-      setWinner("W");
-    } else if ((isAway) && (scores.away.total === scores.home.total) || (!isAway) && (scores.away.total === scores.home.total)) {
+    if (scores.away.total == scores.home.total) {
       setWinner("T");
+      setTeamScore(scores.home.total);
+      setOpponentScore(scores.away.total);
+      return;
+    }
+    
+    if (isAway) {
+      if (scores.away.total < scores.home.total) {
+        setWinner("L");
+      } else {
+        setWinner("W");
+      }
+      setTeamScore(scores.away.total);
+      setOpponentScore(scores.home.total);
     } else {
-      setWinner("L");
+      if (scores.home.total < scores.away.total) {
+        setWinner("L");
+      } else {
+        setWinner("W");
+      }
+      setTeamScore(scores.home.total);
+      setOpponentScore(scores.away.total);
     }
   }, [teams]);
 
@@ -99,22 +117,6 @@ const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
     });
     setDay(dayOfWeek + " " + formatted);
   }, [game])
-
-  /*
-              <span className="flex flex-col w-full items-center">                    
-              <Image
-                aria-hidden
-                src={teams.home.logo}
-                alt="Headshot of player"
-                width={32}
-                height={32}
-              />
-              <div>
-                {teams.home.name}
-              </div>
-              <div></div>                       
-            </span> 
-  */ 
 
   return (
     <li className="w-full lg:w-auto font-spartan cursor-pointer">
@@ -131,7 +133,7 @@ const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
             <p className="text-blue-600 font-semibold">
               {versus}
             </p>
-            <p className="gap-2 flex">                     
+            <div className="gap-2 flex">                     
               <span className="flex w-full items-center gap-2">                    
                 {logo && (          
                   <Image
@@ -146,11 +148,11 @@ const GameCard: React.FC<TeamGameProps> = ({ gameObject, team}) => {
                   {otherTeam}
                 </p>       
               </span>
-            </p>               
+            </div>               
           </div>
           <div className="flex items-center gap-2">
             <p>
-              {scores.home.total} - {scores.away.total} 
+              {teamScore} - {opponentScore} 
             </p>
             {game.status.short === "NS" ? (
               <p className="text-gray-500">
