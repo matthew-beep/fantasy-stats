@@ -1,17 +1,11 @@
 'use client'
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
 import { useState, useEffect } from "react";
 import { useParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link";
 import TeamHeader from './teamInfo';
 import GameCard from "./GameCard";
+import PlayerList from "./playerInfo";
 
 type TeamData = {
   city:string;
@@ -79,7 +73,6 @@ export default function Home() {
   
   const [teamStatData, setTeamStatData] = useState<TeamData | null>(null);
   const [playerData, setPlayerData] = useState<PlayerData[]>([]);
-  const [search, setSearch] = useState<string>("");
   const [id, setId] = useState<string>("");
   const param = useParams();
   const [gameData, setGameData] = useState<GameData[]>([]); 
@@ -183,34 +176,7 @@ export default function Home() {
             </ul>
           </TabsContent>
           <TabsContent value="Players" className="flex flex-col justify-center gap-10">
-            <Input 
-              placeholder="Search for a player"
-              value={search}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-            />
-            <ul className="flex flex-col lg:flex-row lg:flex-wrap w-full gap-5 justify-center">
-            {playerData.filter(player => player.name.toLowerCase().includes(search.toLowerCase())).map((item, index) => (
-              <li key={index}>
-                <Card 
-                  className="flex items-center justify-end flex-row-reverse cursor-pointer h-auto w-84 lg:w-96 px-5 hover:bg-zinc-200 duration-200 transition-all"
-                >
-                  <CardHeader className="flex">
-                    <CardTitle>{item.name}</CardTitle>
-                  </CardHeader>
-                  <div className="w-auto h-full flex justify-cente">
-                    <Image
-                      aria-hidden
-                      src={item.image}
-                      alt="Headshot of player"
-                      width={32}
-                      height={32}
-                    />
-                  </div>
-                  <h4>{item.position}</h4>
-                </Card>
-              </li>
-            ))}
-            </ul>
+            {teamStatData && <PlayerList playerObjects={playerData} team={teamStatData.team.name}/>}
           </TabsContent>
         </Tabs>
       </main>

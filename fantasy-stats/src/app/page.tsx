@@ -57,9 +57,9 @@ export default function Home() {
       console.log("Team data already exists");
       const parsedData = JSON.parse(cachedData);
 
-      const timestamp:any = new Date(parsedData.timestamp);
-      const currentTime:any = new Date();
-      const diffTime:number = Math.abs(currentTime - timestamp);
+      const timestamp:Date = new Date(parsedData.timestamp);
+      const currentTime:Date = new Date();
+      const diffTime:number = Math.abs(currentTime.getTime() - timestamp.getTime());
       console.log(diffTime);
       if (diffTime > 1000 * 60 * 60 * 24) {
         localStorage.removeItem("teamData");
